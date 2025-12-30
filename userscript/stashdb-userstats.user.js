@@ -12,8 +12,9 @@
 // @require     https://cdn.jsdelivr.net/npm/idb@8/build/umd.js
 // ==/UserScript==
 
-const editThreshold = (edit_ratio) =>
-  edit_ratio > 0.9 ? "🟩"
+const editThreshold = (edit_ratio, total_edits) =>
+  edit_ratio > 0.99 && total_edits > 1000 ? "❇️"
+  : edit_ratio > 0.9 ? "🟩"
   : edit_ratio > 0.7 ? "🟨"
   : edit_ratio = 0 ? "❓"
   : "🟥"
@@ -23,7 +24,8 @@ const roundThreshold = (number) => {
   else if (number < 10) return "<10";
   const thresholds = [5000, 4000, 3000, 2000, 1000, 500, 100, 50, 10];
   for (const threshold of thresholds) {
-    if (number >= threshold) return `${threshold}+`;
+    if (number >= threshold && threshold >= 1000) return `${threshold * 0.01 }k`;
+    else if (number >= threshold) return `${threshold}`;
   }
 }
 
@@ -32,12 +34,6 @@ const CACHEVERSION = 1;
 const DEBUG_SKIP_CACHE = false;
 
 GM_addStyle(`
-  .user-card:before {
-    content: "("
-  }
-  .user-card:after {
-    content: ")"
-  }
   .user-card {
     padding-left: 1ch;
     white-space: pre;
@@ -65,8 +61,8 @@ class User {
       user.edit_count.accepted + user.edit_count.immediate_accepted;
     this.edit_reject =
       user.edit_count.rejected +
-      user.edit_count.immediate_rejected +
-      user.edit_count.canceled;
+      user.edit_count.immediate_rejected
+    this.edit_cancel = user.edit_count.canceled;
     this.edit_pending = user.edit_count.pending;
     // date of first closed edit
     this.edit_first = edit.edits.length
@@ -79,10 +75,10 @@ class User {
       user.vote_count.reject + user.vote_count.immediate_reject;
     // total votes
     this.vote_total = this.vote_abstain + this.vote_accept + this.vote_reject;
-    // total edits
+    // total edits excluding canceled
     this.total_edits = this.edit_accept + this.edit_reject + this.edit_pending;
     // accepted / (accepted + rejected)
-    this.edit_ratio = this.edit_accept / this.total_edits;
+    this.edit_ratio = this.edit_accept / (this.edit_accept + this.edit_reject);
     // <1mo since first edit closed, or no edits closed
     this.user_new = this.edit_first
       ? Date.now() - this.edit_first < MONTH
@@ -150,7 +146,8 @@ const fetchUser = (username) => {
     id
     edit_count {
         accepted immediate_accepted
-        rejected immediate_rejected canceled
+        rejected immediate_rejected
+        canceled
         pending
     } vote_count {
         abstain
@@ -237,8 +234,8 @@ const generateUserCard = (user) => {
   voteElem.textContent = "🗳️"
   voteElem.title = `${user.vote_accept} 👍\n${user.vote_reject} 👎\n${user.vote_abstain} 🤷`;
   const editElem = document.createElement("span");
-  editElem.textContent = `${editThreshold(user.edit_ratio)}${roundThreshold(user.edit_accept)}`;
-  editElem.title = `${Math.floor(user.edit_ratio * 100)}%\n${user.edit_accept} ✅\n${user.edit_reject} ❌`;
+  editElem.textContent = `${editThreshold(user.edit_ratio, user.total_edits)}${roundThreshold(user.edit_accept)}`;
+  editElem.title = `${Math.floor(user.edit_ratio * 100)}%\n${user.edit_accept} ✅\n${user.edit_reject} ❌\n${user.edit_cancel} 🗑️`;
   const opElem = document.createElement("span");
   opElem.textContent = "🔨";
   opElem.title = `${user.operation_stats.create} ✨\n${user.operation_stats.modify} 🛠️\n${user.operation_stats.destroy} 🗑️\n${user.operation_stats.merge} 🔗`;
@@ -246,10 +243,22 @@ const generateUserCard = (user) => {
   targetElem.textContent = "🎯"
   targetElem.title = `${user.type_stats.scene} 🎞️\n${user.type_stats.studio} 🎬\n${user.type_stats.performer} 🎭\n${user.type_stats.tag} 🏷️`;
   card.append(voteElem, editElem, opElem, targetElem);
+  const originalHTML = card.innerHTML;
   // add click to toggle
   card.addEventListener("click", (evt) => {
-    card.textContent = card.parentElement.title;
-    evt.preventDefault()
+    evt.preventDefault()    
+    const expanded = card.dataset.expanded === "1";
+    if (!expanded) {
+      card.dataset.expanded = "1";
+      const summary =
+        card.previousElementSibling?.title ||
+        card.parentElement?.title ||
+        "";
+      card.textContent = summary;
+    } else {
+      card.dataset.expanded = "0";
+      card.innerHTML = originalHTML;
+    }
   });
   return card;
 };
@@ -291,12 +300,12 @@ async function setupPage() {
   // get fetched usernames
   users.forEach((userElem) => {
     // check if already has usercard
-    if (userElem.querySelector(".user-card")) return;
+    if (userElem.nextElementSibling?.classList?.contains("user-card")) return;
     const username = userElem.href.split("/").pop();
     getUser(username).then((userData) => {
-      if (userElem.querySelector(".user-card")) return;
+      if (userElem.nextElementSibling?.classList?.contains("user-card")) return;
       const userCard = generateUserCard(userData);
-      userElem.append(userCard);
+      userElem.insertAdjacentElement("afterend", userCard);
       userElem.title = generateUserSummary(userData);
     });
   });
