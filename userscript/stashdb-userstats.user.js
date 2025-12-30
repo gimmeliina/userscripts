@@ -2,7 +2,7 @@
 // @name        stashdb-userstats
 // @namespace   feederbox.cc
 // @author      feederbox826
-// @version     0.1.3
+// @version     0.2.0
 // @description Adds user stats to stashdb
 // @match       https://stashdb.org/*
 // @match       https://fansdb.cc/*
