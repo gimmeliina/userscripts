@@ -77,7 +77,7 @@ class User {
     // total votes
     this.vote_total = this.vote_abstain + this.vote_accept + this.vote_reject;
     // total edits
-    this.total_edits = this.edit_accept + this.edit_reject + ((this.edit_pending  + this.edit_cancel) / 2);
+    this.total_edits = this.edit_accept + this.edit_reject;
     // accepted / (accepted + rejected)
     this.edit_ratio = this.edit_accept / this.total_edits;
     // <1mo since first edit closed, or no edits closed
