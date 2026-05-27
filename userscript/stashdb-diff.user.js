@@ -2,17 +2,17 @@
 // @name         stashdb-diff
 // @author       feederbox826
 // @namespace    feederbox.cc
-// @version      0.2.1
+// @version      0.2.5
 // @description  add character-by-character diff for stashdb
 // @match        https://fansdb.cc/*
 // @match        https://stashdb.org/*
 // @run-at       document-idle
-// @grant        GM_addStyle
+// @grant        GM.addStyle
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jsdiff/2.0.2/diff.js
 // @require      https://feederbox.cc/uscript/requires/title-obs.js
 // ==/UserScript==
 
-GM_addStyle(`
+GM.addStyle(`
 diff-del {
     --bs-bg-opacity: 1;
 	background-color: rgba(var(--bs-danger-rgb),var(--bs-bg-opacity));
