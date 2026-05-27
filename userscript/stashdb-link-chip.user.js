@@ -7,11 +7,11 @@
 // @match        https://fansdb.cc/*
 // @match        https://stashdb.org/*
 // @run-at       document-idle
-// @grant        GM_addStyle
+// @grant        GM.addStyle
 // @require      https://feederbox.cc/uscript/requires/title-obs.js
 // ==/UserScript==
 
-GM_addStyle(`
+GM.addStyle(`
   .EditComment a.link-chip {
       border-radius: 3px;
       background: #444;
