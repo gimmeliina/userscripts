@@ -2,16 +2,16 @@
 // @name         stashdb-img-res
 // @author       feederbox826
 // @namespace    feederbox.cc
-// @version      0.1.2
+// @version      0.1.5
 // @description  adds image resolution to stashdb images
 // @match        https://fansdb.cc/*
 // @match        https://stashdb.org/*
 // @run-at       document-idle
-// @grant        GM_addStyle
+// @grant        GM.addStyle
 // @require      https://feederbox.cc/uscript/requires/title-obs.js
 // ==/UserScript==
 
-GM_addStyle(`
+GM.addStyle(`
   .img-res {
     position: absolute;
     right: 0;
