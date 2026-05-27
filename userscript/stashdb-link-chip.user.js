@@ -2,7 +2,7 @@
 // @name         stashdb-link-chip
 // @namespace    feederbox.cc
 // @author       feederbox826
-// @version      0.1.0
+// @version      0.1.1
 // @description  add chips to links in edit queue
 // @match        https://fansdb.cc/*
 // @match        https://stashdb.org/*
