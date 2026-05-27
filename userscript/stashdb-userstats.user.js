@@ -2,16 +2,14 @@
 // @name        stashdb-userstats-ext
 // @namespace   gimmelii.na
 // @author      gimeliina
-// @version     0.3.1
+// @version     0.3.5
 // @description Adds user stats to stashdb
 // @match       https://stashdb.org/*
 // @match       https://fansdb.cc/*
 // @match       https://javstash.org/*
-// @grant       GM_addStyle
+// @grant       GM.addStyle
 // @require     https://feederbox.cc/uscript/requires/wfke.js
 // @require     https://cdn.jsdelivr.net/npm/idb@8/build/umd.js
-// @downloadURL https://raw.githubusercontent.com/gimmeliina/userscripts/refs/heads/main/userscript/stashdb-userstats.user.js
-// @updateURL   https://raw.githubusercontent.com/gimmeliina/userscripts/refs/heads/main/userscript/stashdb-userstats.user.js
 // ==/UserScript==
 
 const editThreshold = (edit_ratio, total_edits) =>
@@ -52,7 +50,7 @@ const roundThreshold = (number) => {
 const CACHEVERSION = 2;
 const DEBUG_SKIP_CACHE = false;
 
-GM_addStyle(`
+GM.addStyle(`
   .user-card {
     padding-left: 1ch;
     white-space: pre;
