@@ -10,6 +10,8 @@
 // @grant       GM_addStyle
 // @require     https://feederbox.cc/uscript/requires/wfke.js
 // @require     https://cdn.jsdelivr.net/npm/idb@8/build/umd.js
+// @downloadURL https://raw.githubusercontent.com/gimmeliina/userscripts/refs/heads/main/userscript/stashdb-userstats.user.js
+// @updateURL   https://raw.githubusercontent.com/gimmeliina/userscripts/refs/heads/main/userscript/stashdb-userstats.user.js
 // ==/UserScript==
 
 const editThreshold = (edit_ratio, total_edits) =>
